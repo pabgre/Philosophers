@@ -6,7 +6,7 @@
 /*   By: psan-gre <psan-gre@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/07 13:21:42 by psan-gre          #+#    #+#             */
-/*   Updated: 2021/09/29 09:07:15 by psan-gre         ###   ########.fr       */
+/*   Updated: 2021/09/29 12:39:23 by psan-gre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,11 @@ int	main_thread(t_philo *philo_crew, int num_philo)
 	int	i;
 
 	i = 0;
-	while (!all_dead(philo_crew, num_philo))
+	while (anyone_dead(philo_crew, num_philo))
 	{
 		i = 0;
 	}
+	usleep(1000);
 	return (i);
 }
 

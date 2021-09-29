@@ -6,7 +6,7 @@
 /*   By: psan-gre <psan-gre@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/07 14:10:00 by psan-gre          #+#    #+#             */
-/*   Updated: 2021/09/29 09:07:27 by psan-gre         ###   ########.fr       */
+/*   Updated: 2021/09/29 12:50:49 by psan-gre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,17 +66,23 @@ int	all_dead(t_philo *philo_crew, int num_philo)
 int	anyone_dead(t_philo *philo_crew, int num_philo)
 {
 	int	i;
-	int	dead;
 
-	dead = 1;
 	i = 0;
-	while (i < num_philo && dead != 0)
+	while (i < num_philo)
 	{
 		if ((*philo_crew[i].alive) == 0)
-			return (1);
+		{
+			i = 0;
+			while (i < num_philo)
+			{
+				*philo_crew[i].alive = 0;
+				i++;
+			}
+			return (0);
+		}
 		i++;
 	}
-	return (0);
+	return (1);
 }
 
 void	wake_up_philo(t_philo *philo_crew, int num_philo)
@@ -98,7 +104,12 @@ void	wake_up_philo(t_philo *philo_crew, int num_philo)
 
 int	is_dead(t_philo philo)
 {
-	return (get_timestamp() - philo.last_meal >= philo.params.death_time);
+	if (get_timestamp() - philo.last_meal >= philo.params.death_time)
+	{
+		*philo.alive = 0;
+		return (1);
+	}
+	return (0);
 }
 
 int	philo_lifetime(t_philo self)
@@ -111,19 +122,19 @@ int	philo_lifetime(t_philo self)
 	i = 0;
 	right = 0;
 	left = 0;
-	while (i != self.params.num_meals)
+	while (i != self.params.num_meals && *self.alive == 1)
 	{
+		if (self.id % 2 == 1)
+			usleep(200);
 		get_chopstick(&right, self.right_lock, self.right_stick, self);
 		get_chopstick(&left, self.left_lock, self.left_stick, self);
 		if (left && right)
 		{
-			notify_state(self.print_lock, self, _eating);
 			self.last_meal = get_timestamp();
-			time_count = 0;
-			while (time_count < self.params.eat_time)
+			notify_state(self.print_lock, self, _eating);
+			while (get_timestamp() - self.last_meal < self.params.eat_time)
 			{
-				usleep(1000);
-				time_count += 1;
+				usleep(60);
 				if (is_dead(self))
 				{
 					notify_state(self.print_lock, self, _died);
@@ -134,11 +145,10 @@ int	philo_lifetime(t_philo self)
 			release_chopstick(&right, self.right_lock, self.right_stick);
 			release_chopstick(&left, self.left_lock, self.left_stick);
 			notify_state(self.print_lock, self, _sleeping);
-			time_count = 0;
-			while (time_count < self.params.sleep_time)
+			time_count = get_timestamp();
+			while (get_timestamp() - time_count < self.params.sleep_time)
 			{
-				usleep(1000);
-				time_count += 1;
+				usleep(60);
 				if (is_dead(self))
 				{
 					notify_state(self.print_lock, self, _died);

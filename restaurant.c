@@ -6,7 +6,7 @@
 /*   By: psan-gre <psan-gre@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 12:17:01 by psan-gre          #+#    #+#             */
-/*   Updated: 2021/09/22 12:44:16 by psan-gre         ###   ########.fr       */
+/*   Updated: 2021/09/29 12:37:40 by psan-gre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	notify_state(pthread_mutex_t *print_lock, t_philo philo, enum e_philo_state 
 	u_int64_t	time_stamp;
 
 	time_stamp = get_timestamp() - philo.params.init_time;
-	pthread_mutex_unlock(print_lock);
+	pthread_mutex_lock(print_lock);
 	if (state == _fork_taken)
 		printf("[%ld] %d has taken a fork.\n", time_stamp, philo.id);
 	if (state == _eating)
@@ -56,6 +56,7 @@ int	notify_state(pthread_mutex_t *print_lock, t_philo philo, enum e_philo_state 
 		printf("[%ld] %d is thinking.\n", time_stamp, philo.id);
 	if (state == _died)
 		printf("[%ld] %d died.\n", time_stamp, philo.id);
-	pthread_mutex_unlock(print_lock);
+	if (state != _died)
+		pthread_mutex_unlock(print_lock);
 	return (0);
 }
