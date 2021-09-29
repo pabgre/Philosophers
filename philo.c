@@ -6,7 +6,7 @@
 /*   By: psan-gre <psan-gre@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/07 14:10:00 by psan-gre          #+#    #+#             */
-/*   Updated: 2021/09/21 17:04:52 by psan-gre         ###   ########.fr       */
+/*   Updated: 2021/09/29 09:07:27 by psan-gre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,13 @@ t_philo	philo_init(t_params params, int id, pthread_mutex_t *locks, int *sticks,
 
 	philo.params = params;
 	philo.id = id;
+	philo.last_meal = get_timestamp();
 	philo.alive = malloc(sizeof(int *));
 	*philo.alive = 1;
 	philo.print_lock = *print_lock;
 	left = id - 1;
 	right = id % params.num_philo;
-	if (id == params.num_philo)
+	if (id % 2 == 1)
 	{
 		left = right;
 		right = id - 1;
@@ -62,6 +63,22 @@ int	all_dead(t_philo *philo_crew, int num_philo)
 	return (dead);
 }
 
+int	anyone_dead(t_philo *philo_crew, int num_philo)
+{
+	int	i;
+	int	dead;
+
+	dead = 1;
+	i = 0;
+	while (i < num_philo && dead != 0)
+	{
+		if ((*philo_crew[i].alive) == 0)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 void	wake_up_philo(t_philo *philo_crew, int num_philo)
 {
 	pthread_t	thid;
@@ -79,31 +96,61 @@ void	wake_up_philo(t_philo *philo_crew, int num_philo)
 	}
 }
 
+int	is_dead(t_philo philo)
+{
+	return (get_timestamp() - philo.last_meal >= philo.params.death_time);
+}
+
 int	philo_lifetime(t_philo self)
 {
-	int	i;
-	int	right;
-	int	left;
+	int			i;
+	int			right;
+	int			left;
+	u_int64_t	time_count;
 
 	i = 0;
 	right = 0;
 	left = 0;
-	notify_state(self.print_lock, "Buenas", self.id);
-	while (i < self.params.eat_time)
+	while (i != self.params.num_meals)
 	{
-		get_chopstick(&right, self.right_lock, self.right_stick);
-		get_chopstick(&left, self.left_lock, self.left_stick);
+		get_chopstick(&right, self.right_lock, self.right_stick, self);
+		get_chopstick(&left, self.left_lock, self.left_stick, self);
 		if (left && right)
 		{
-			notify_state(self.print_lock, "Estoy comiendo...", self.id);
-			usleep(1000000);
+			notify_state(self.print_lock, self, _eating);
+			self.last_meal = get_timestamp();
+			time_count = 0;
+			while (time_count < self.params.eat_time)
+			{
+				usleep(1000);
+				time_count += 1;
+				if (is_dead(self))
+				{
+					notify_state(self.print_lock, self, _died);
+					return (0);
+				}
+			}
+			i++;
 			release_chopstick(&right, self.right_lock, self.right_stick);
 			release_chopstick(&left, self.left_lock, self.left_stick);
-			i++;
-			notify_state(self.print_lock, "Buenas noches...", self.id);
-			usleep(1000000);
+			notify_state(self.print_lock, self, _sleeping);
+			time_count = 0;
+			while (time_count < self.params.sleep_time)
+			{
+				usleep(1000);
+				time_count += 1;
+				if (is_dead(self))
+				{
+					notify_state(self.print_lock, self, _died);
+					return (0);
+				}
+			}
+		}
+		else if (is_dead(self))
+		{
+			notify_state(self.print_lock, self, _died);
+			return (0);
 		}
 	}
-	notify_state(self.print_lock, "Venga chao", self.id);
 	return (0);
 }

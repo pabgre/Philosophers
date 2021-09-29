@@ -6,7 +6,7 @@
 /*   By: psan-gre <psan-gre@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/07 13:21:42 by psan-gre          #+#    #+#             */
-/*   Updated: 2021/09/21 16:15:21 by psan-gre         ###   ########.fr       */
+/*   Updated: 2021/09/29 09:07:15 by psan-gre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,9 @@ t_params	process_input(int argc, char **argv)
 	params.death_time = ft_atoi(argv[2]);
 	params.eat_time = ft_atoi(argv[3]);
 	params.sleep_time = ft_atoi(argv[4]);
+	params.init_time = get_timestamp();
 	if (argc > 5)
-		params.num_meals = ft_atoi(argv[4]);
+		params.num_meals = ft_atoi(argv[5]);
 	else
 		params.num_meals = -1;
 	return (params);

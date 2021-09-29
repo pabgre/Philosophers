@@ -6,7 +6,7 @@
 #    By: psan-gre <psan-gre@student.42madrid.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/07 13:35:42 by psan-gre          #+#    #+#              #
-#    Updated: 2021/09/21 17:07:35 by psan-gre         ###   ########.fr        #
+#    Updated: 2021/09/22 13:27:35 by psan-gre         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ INCLUDES = ./
 
 RM		= rm -f
 
-CFLAGS	= -Wall -Wextra -Werror -pthread -lpthread
+CFLAGS	= -Wall -Wextra -Werror -pthread -lpthread -g
 
 all: $(NAME)
 
