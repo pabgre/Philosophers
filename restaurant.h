@@ -1,25 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.h                                            :+:      :+:    :+:   */
+/*   restaurant.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: psan-gre <psan-gre@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/09/07 13:21:54 by psan-gre          #+#    #+#             */
-/*   Updated: 2021/09/29 14:13:13 by psan-gre         ###   ########.fr       */
+/*   Created: 2021/09/29 13:47:31 by psan-gre          #+#    #+#             */
+/*   Updated: 2021/09/29 14:13:53 by psan-gre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_H
-# define PHILO_H
-# include "ft_utils.h"
-# include "restaurant.h"
+#ifndef RESTAURANT_H
+# define RESTAURANT_H
 # include "philo_structs.h"
 
-int		philo_lifetime(t_philo self);
-t_philo	philo_init(t_params params, int id, t_mutex *locks, int *sticks);
-void	*philo_thread(void *arg);
-int		anyone_dead(t_philo *philo_crew, int num_philo);
-void	wake_up_philo(t_philo *philo_crew, int num_philo);
-int		is_dead(t_philo philo);
+int		notify_state(t_mutex *print_lock, t_philo philo, t_state state);
+void	generate_chopsticks(int num_philo, int **sticks, t_mutex **locks);
 #endif

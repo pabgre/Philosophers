@@ -6,13 +6,13 @@
 /*   By: psan-gre <psan-gre@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/21 12:17:01 by psan-gre          #+#    #+#             */
-/*   Updated: 2021/09/29 12:37:40 by psan-gre         ###   ########.fr       */
+/*   Updated: 2021/09/29 14:03:27 by psan-gre         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "restaurant.h"
 
-void	generate_chopsticks(int num_philo, int **sticks, pthread_mutex_t **locks)
+void	generate_chopsticks(int num_philo, int **sticks, t_mutex **locks)
 {
 	int				i;
 	pthread_mutex_t	*my_locks;
@@ -32,15 +32,7 @@ void	generate_chopsticks(int num_philo, int **sticks, pthread_mutex_t **locks)
 	*sticks = my_sticks;
 }
 
-u_int64_t	get_timestamp(void)
-{
-	struct timeval	time;
-
-	gettimeofday(&time, NULL);
-	return (time.tv_sec * 1000 + time.tv_usec / 1000);
-}
-
-int	notify_state(pthread_mutex_t *print_lock, t_philo philo, enum e_philo_state state)
+int	notify_state(t_mutex *print_lock, t_philo philo, t_state state)
 {
 	u_int64_t	time_stamp;
 
